@@ -1,0 +1,57 @@
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import javax.swing.text.html.parser.Parser;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class Rub {
+
+    // получение данных сайта
+    private static Document getPage()  throws  IOException{
+                String url = "https://cbr.ru/currency_base/daily/";
+                Document page = Jsoup.connect(url).get();
+                return page;}
+
+
+     public static void main(String[] args) throws IOException {
+        //считать элемент
+        System.out.println("Конвентер валюты, введите количество");
+         Scanner num= new Scanner(System.in);
+         int sum = num.nextInt();
+         //получение тела таблицы tbody по тэгу
+        Document page = getPage();
+        Elements table = page.getElementsByTag("tbody");
+        Element our = table.get(0);
+        Elements elements_table= our.children();
+       // получение форинтов
+        Element huf = elements_table.get(7);
+        Elements h = huf.children();
+        Element h1 = h.get(4);
+        // получение крон
+         Element sek = elements_table.get(20);
+         Elements s = sek.children();
+         Element s1 = s.get(4);
+//замена знаков
+         String str = h1.text();
+         for (int i=0; i<str.length(); i++) {
+             str = str.replace(",", ".");
+         }
+         Float t = Float.parseFloat(str);
+         //
+         String str1 = s1.text();
+         for (int i=0; i<str1.length(); i++) {
+             str1 = str1.replace(",", ".");
+         }
+         Float t1 = Float.parseFloat(str1);
+
+         Float result = sum * t;//промежуточный результат
+         System.out.println("В 1 Венгерском форинте " + h1.text()  + "  " +
+                     "" + " следовательно при переводе вы получите " + sum * t);
+         System.out.println("В 1 Норвежской кроне " + " " + s1.text() + " " +
+                 "рубля следовательно при переводе вы получите " + sum * t1 + " " + "рубля");
+         System.out.println("При переводе Венгерских форинтов в рубли, а затем в норвежскую крону : " + result / t1 + " ");
+    }
+}
